@@ -7,6 +7,7 @@ require 'om_api_client'
 require 'omcli/version.rb'
 require 'omcli/client.rb'
 require 'omcli/user.rb'
+require 'omcli/processor.rb'
 
 require 'omcli/support/hash'
 

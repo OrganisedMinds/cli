@@ -8,5 +8,6 @@ module OmCli::Processor
     end
   end
 
-  autoload :Activity, 'omcli/processor/activity'
+  autoload :Activity,   'omcli/processor/activity'
+  autoload :Workspace,  'omcli/processor/workspace'
 end

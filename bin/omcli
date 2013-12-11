@@ -31,6 +31,26 @@ command :activity do |c|
   end
 end
 
+desc 'manage workspaces'
+command :workspace do |c|
+  processor = OmCli::Processor::Workspace.new
+
+  c.desc 'list workspaces'
+  c.command :list do |n|
+    n.action do |global_options, options, args|
+      processor.list(global_options, options, args)
+    end
+  end
+
+  c.desc 'delete workspace'
+  c.arg_name 'id_of_workspace'
+  c.command :destroy do |n|
+    n.action do |global_options, options, args|
+      processor.destroy(global_options, options, args)
+    end
+  end
+end
+
 pre do |global,command,options,args|
   # Pre logic here
   # Return true to proceed; false to abort and not call the

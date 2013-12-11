@@ -6,7 +6,7 @@ module OmCli::Processor
     end
 
     def destroy(global_options, options, args)
-      res = client.destroy_workspace(args)
+      res = client.destroy_workspace(args.first)
       Formatador.display_line("[green]Success[/]")
     end
   end

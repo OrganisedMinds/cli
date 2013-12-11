@@ -8,5 +8,7 @@ require 'omcli/version.rb'
 require 'omcli/client.rb'
 require 'omcli/user.rb'
 
+require 'omcli/support/hash'
+
 module OmCli
 end

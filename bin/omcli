@@ -17,11 +17,19 @@ command :activity do |c|
   c.arg_name 'name_of_activity'
   c.command :new do |n|
     n.action do |global_options,options,args|
-      res = om_client.create_activity(name: args)
+      res = om_client.create_activity(name: args.first)
       om_client.workspace_inbox_add(
-        user.personal_workspace.id, type: "Activity", id: res.id
+        user.personal_workspace.id, item_type: "Activity", item_id: res.id
       )
       puts "Activity #{res.name} was successfully created in your personal workspace."
+    end
+  end
+
+  c.desc 'list activities'
+  c.command :list do |n|
+    n.action do |global_options,options,args|
+      res = om_client.workspace_items(user.personal_workspace.id)
+      Formatador.display_table(res.map { |i| i.activity.pick("id", "name", "description") })
     end
   end
 end

@@ -4,10 +4,11 @@ require 'yaml'
 require 'formatador'
 require 'om_api_client'
 
-require 'omcli/version.rb'
-require 'omcli/client.rb'
-require 'omcli/user.rb'
-require 'omcli/processor.rb'
+require 'omcli/version'
+require 'omcli/command_parser'
+require 'omcli/client'
+require 'omcli/user'
+require 'omcli/processor'
 
 require 'omcli/support/hash'
 

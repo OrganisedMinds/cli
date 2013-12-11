@@ -1,12 +1,12 @@
 module OmCli::Processor
   class Workspace < OmCli::Processor::Core
     def list(global_options, options, args)
-      res = client.workspaces
+      res = @client.workspaces
       Formatador.display_table(res.map { |w| w.pick("id", "name", "description") })
     end
 
     def destroy(global_options, options, args)
-      res = client.destroy_workspace(args.first)
+      res = @client.destroy_workspace(args.first)
       Formatador.display_line("[green]Success[/]")
     end
   end

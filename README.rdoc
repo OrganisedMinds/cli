@@ -1,0 +1,11 @@
+= omcli
+
+OrganisedMinds command line application.
+
+== Instalation
+  gem install omcli
+
+== Usage
+  omcli help
+
+On first run <tt>omcli</tt> creates new configuration file <tt>.omcli.rc.yaml</tt> in your home directory. Open the config with your favourite editor and fill in required fields.

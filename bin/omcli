@@ -7,21 +7,14 @@ include GLI::App
 om_client = OmCli::Client.new
 user      = OmCli::User.new(om_client)
 
-program_desc 'Describe your application here'
+program_desc 'OrganisedMinds CLI'
 
 version OmCli::VERSION
 
-desc 'Describe some switch here'
-switch [:s,:switch]
-
-desc 'Describe some flag here'
-default_value 'the default'
-arg_name 'The name of the argument'
-flag [:f,:flagname]
-
 desc 'manage activities'
-arg_name 'name'
 command :activity do |c|
+  c.desc 'create new activity'
+  c.arg_name 'name_of_activity'
   c.command :new do |n|
     n.action do |global_options,options,args|
       res = om_client.create_activity(name: args)

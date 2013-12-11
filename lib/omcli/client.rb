@@ -3,8 +3,8 @@ module OmCli
     def initialize
       opts = {
         endpoint:      'http://localhost:3000/',
-        client_id:     'add valid',
-        client_secret: 'add valid',
+        client_id:     '<add-yours>',
+        client_secret: '<add-yours>',
         scopes:        %w[read write]
       }
 
@@ -23,7 +23,14 @@ module OmCli
     end
 
     def method_missing(name, *args, &block)
-      @client.send(name, *args, &block)
+      begin
+        @client.send(name, *args, &block)
+      rescue
+        unless name == :me
+          Formatador.display_line("[red]Error occured while processing #{name}. Make sure your config is valid!")
+          exit(1)
+        end
+      end
     end
   end
 end

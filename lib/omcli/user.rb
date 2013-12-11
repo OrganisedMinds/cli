@@ -8,6 +8,8 @@ module OmCli
       @email = user.email
 
       @personal_workspace = client.workspaces.first
+    rescue
+      Formatador.display_line('[red]Cannot get info about you. Is your config valid?[/]')
     end
   end
 end

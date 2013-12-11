@@ -1,0 +1,6 @@
+= omcli
+
+Describe your project here
+
+:include:omcli.rdoc
+

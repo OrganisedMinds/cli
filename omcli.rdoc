@@ -1,0 +1,5 @@
+= omcli
+
+Generate this with
+    omcli rdoc
+After you have described your command line interface

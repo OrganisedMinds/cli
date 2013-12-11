@@ -12,7 +12,9 @@ module OmCli::Processor
     end
 
     def list(global_options, options, args)
-      res = @client.workspace_items(@user.personal_workspace.id)
+      ws = @user.personal_workspace.id unless options[:workspace]
+
+      res = @client.workspace_items(ws).select { |i| i.keys.first == "activity" }
       Formatador.display_table(res.map { |i| i.activity.pick("id", "name", "description") })
     end
   end

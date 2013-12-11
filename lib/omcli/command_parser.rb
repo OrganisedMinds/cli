@@ -42,17 +42,40 @@ module OmCli
     def init_activities
       desc 'manage activities'
       command :activity do |c|
-        c.desc 'create new activity'
-        c.arg_name 'name_of_activity'
-        c.command :new do |n|
-          n.action do |global_options, options, args|
+        c.desc 'list activities'
+        c.command :list do |n|
+          n.desc "Page to show"
+          n.flag :page, default_value: 1, type: Integer
+
+          n.desc "Limit of activities per page"
+          n.flag :limit, default_value: 20, type: Integer
+
+          output = ["table", "list", "json"]
+          n.desc "Output format. Possible values are #{output.join(', ')}"
+          n.flag :output, default_value: "table", must_match: output
+
+          n.desc "Id of a stack to create activity in."
+          n.flag [:s, :stack], type: Integer
+
+          n.desc "Id of a worksapce to create activity in."
+          n.flag [:w, :workspace], type: Integer
+
+          n.desc "Attributes to show"
+          n.flag [:attributes], default_value: "id,name,description"
+
+          n.desc "Don't paginate activities. It will ignore --page and --limit flags."
+          n.switch [:A, :all]
+
+          n.action do |global_options,options,args|
             @processor.proceed(c.name, n.name, global_options, options, args)
           end
         end
 
-        c.desc 'list activities'
-        c.command :list do |n|
-          n.action do |global_options,options,args|
+        c.desc 'create new activity'
+        c.arg_name '<name_of_activity>'
+        c.command :new do |n|
+          n.action do |global_options, options, args|
+            puts options.inspect
             @processor.proceed(c.name, n.name, global_options, options, args)
           end
         end

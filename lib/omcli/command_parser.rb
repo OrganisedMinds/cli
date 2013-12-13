@@ -12,6 +12,9 @@ module OmCli
 
       version OmCli::VERSION
 
+      desc "Output format. Possible values are #{OmCli::IO::OUTPUT_TYPES.join(', ')}"
+      flag :output, default_value: "table", must_match: OmCli::IO::OUTPUT_TYPES
+
       init_activities
       init_workspaces
 
@@ -33,7 +36,10 @@ module OmCli
       on_error do |exception|
         # Error logic here
         # return false to skip default error handling
-        false
+        # false
+        # true
+        puts "DEBUG: #{exception.inspect}"
+        puts "DEBUG: #{exception.backtrace.join("\n")}"
       end
 
       exit run(ARGV)
@@ -49,10 +55,6 @@ module OmCli
 
           n.desc "Limit of activities per page"
           n.flag :limit, default_value: 20, type: Integer
-
-          output = ["table", "list", "json"]
-          n.desc "Output format. Possible values are #{output.join(', ')}"
-          n.flag :output, default_value: "table", must_match: output
 
           n.desc "Id of a stack to create activity in."
           n.flag [:s, :stack], type: Integer

@@ -1,7 +1,5 @@
 class Hash
   def pick(*values)
-    sub_objects = []
-
     res = {}
 
     values.each do |value|

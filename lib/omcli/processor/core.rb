@@ -6,8 +6,8 @@ module OmCli::Processor
     end
 
     def proceed(object, command, global_options, options, args)
-      client ||= OmCli::Client.new
-      user   ||= OmCli::User.new(client)
+      @client ||= OmCli::Client.new
+      @user   ||= OmCli::User.new(client)
 
       object = "OmCli::Processor::#{object.capitalize}"
 

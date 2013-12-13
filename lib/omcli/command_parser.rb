@@ -12,6 +12,8 @@ module OmCli
 
       version OmCli::VERSION
 
+      subcommand_option_handling :normal
+
       desc "Output format. Possible values are #{OmCli::IO::OUTPUT_TYPES.join(', ')}"
       flag :output, default_value: "table", must_match: OmCli::IO::OUTPUT_TYPES
 
@@ -49,36 +51,45 @@ module OmCli
       desc 'manage activities'
       command :activity do |c|
         c.desc 'list activities'
-        c.command :list do |n|
-          n.desc "Page to show"
-          n.flag :page, default_value: 1, type: Integer
+        c.command :list do |s|
+          s.desc "Page to show"
+          s.flag :page, default_value: 1, type: Integer
 
-          n.desc "Limit of activities per page"
-          n.flag :limit, default_value: 20, type: Integer
+          s.desc "Limit of activities per page"
+          s.flag :limit, default_value: 20, type: Integer
 
-          n.desc "Id of a stack to create activity in."
-          n.flag [:s, :stack], type: Integer
+          # TODO: implement this
+          # add user
+          # allow list without workspace or stack
+          #
+          # s.desc "Id of a stack"
+          # s.flag [:s, :stack], type: Integer
 
-          n.desc "Id of a worksapce to create activity in."
-          n.flag [:w, :workspace], type: Integer
+          s.desc "Id of a workspace"
+          s.flag [:w, :workspace], type: Integer
 
-          n.desc "Attributes to show"
-          n.flag [:attributes], default_value: "id,name,description"
+          s.desc "Attributes to show"
+          s.flag [:attributes], default_value: "id,name,description"
 
-          n.desc "Don't paginate activities. It will ignore --page and --limit flags."
-          n.switch [:A, :all]
+          s.desc "Don't paginate activities. It will ignore --page and --limit flags."
+          s.switch [:A, :all]
 
-          n.action do |global_options,options,args|
-            @processor.proceed(c.name, n.name, global_options, options, args)
+          s.action do |global_options,options,args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
           end
         end
 
         c.desc 'create new activity'
         c.arg_name '<name_of_activity>'
-        c.command :new do |n|
-          n.action do |global_options, options, args|
-            puts options.inspect
-            @processor.proceed(c.name, n.name, global_options, options, args)
+        c.command :new do |s|
+          s.desc "Id of a workspace to create an activity in"
+          s.flag [:w, :workspace], type: Integer
+
+          s.desc "Attributes to show for newly created activity"
+          s.flag [:attributes], default_value: "id,name,description"
+
+          s.action do |global_options, options, args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
           end
         end
       end

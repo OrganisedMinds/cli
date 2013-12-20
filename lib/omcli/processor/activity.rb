@@ -1,12 +1,12 @@
 module OmCli::Processor
-  class Activity
-    DEFAULT_ATTRIBUTES = %w[id name description created_at]
+  class Activity < OmCli::Processor::Base
+    DEFAULT_ATTRIBUTES = %w[id name]
 
-    def initialize
+    def initialize(*args)
+      super(*args)
     end
 
     def new(global_options, options, args)
-      io         = detect_io(global_options[:output])
       workspace  = detect_workspace(options[:workspace])
       attributes = detect_attributes(options[:attributes])
 
@@ -22,11 +22,10 @@ module OmCli::Processor
         end
       end
 
-      io.display(res.pick(*attributes))
+      @io.display(res.pick(*attributes))
     end
 
     def list(global_options, options, args)
-      io         = detect_io(global_options[:output])
       workspace  = detect_workspace(options[:workspace])
       attributes = detect_attributes(options[:attributes])
       pagination = gimme_pagination(options)
@@ -45,7 +44,7 @@ module OmCli::Processor
         end if workspace
       end
 
-      io.display(res.map do |i|
+      @io.display(res.map do |i|
         workspace.nil? ? i.pick(*attributes) : i.activity.pick(*attributes)
       end)
     end

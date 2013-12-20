@@ -12,7 +12,7 @@ module OmCli::Processor
 
       object = "OmCli::Processor::#{object.capitalize}"
 
-      handler = Object.const_get(object).new
+      handler = Object.const_get(object).new(global_options)
 
       handler.instance_variable_set(:@client, client)
 
@@ -29,15 +29,11 @@ module OmCli::Processor
       def handle_error(msg="Error")
         res = yield
         unless @client.last_response.status == 200
-          io.error(res && res.respond_to?(:message) ? res.message : msg)
+          @io.error(res && res.respond_to?(:message) ? res.message : msg)
           exit(1)
         end
 
         return res
-      end
-
-      def detect_io(mode)
-        OmCli::IO.new(mode)
       end
 
       def gimme_pagination(opts)

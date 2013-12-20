@@ -118,10 +118,22 @@ module OmCli
           s.flag [:w, :workspace], type: Integer
 
           s.desc "Attributes to show for newly created activity"
-          s.flag [:attributes], default_value: "id,name,description"
+          s.flag [:attributes], default_value: OmCli::Processor::Activity::DEFAULT_ATTRIBUTES.join(',')
 
           s.action do |global_options, options, args|
             @processor.proceed(c.name, s.name, global_options, options, args)
+          end
+        end
+
+        %w[play pause finish delete reject approve accept decline take_back take_over].each do |action|
+          c.desc "#{action} activity"
+          c.command action.to_sym do |s|
+            s.desc "Attributes to show for newly created activity"
+            s.flag [:attributes], default_value: OmCli::Processor::Activity::DEFAULT_ATTRIBUTES.join(',')
+
+            s.action do |global_options, options, args|
+              @processor.proceed(c.name, s.name, global_options, options, args)
+            end
           end
         end
       end
@@ -131,17 +143,19 @@ module OmCli
       desc 'manage workspaces'
       command :workspace do |c|
         c.desc 'list workspaces'
-        c.command :list do |n|
-          n.action do |global_options, options, args|
-            @processor.proceed(c.name, n.name, global_options, options, args)
+        c.command :list do |s|
+          s.action do |global_options, options, args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
           end
+          s.desc "Attributes to show"
+          s.flag [:attributes], default_value: OmCli::Processor::Activity::DEFAULT_ATTRIBUTES.join(',')
         end
 
         c.desc 'delete workspace'
         c.arg_name 'id_of_workspace'
-        c.command :destroy do |n|
-          n.action do |global_options, options, args|
-            @processor.proceed(c.name, n.name, global_options, options, args)
+        c.command :destroy do |s|
+          s.action do |global_options, options, args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
           end
         end
       end

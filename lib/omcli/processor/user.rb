@@ -2,10 +2,6 @@ module OmCli::Processor
   class User < OmCli::Processor::Base
     DEFAULT_ATTRIBUTES = %w[id email first_name last_name]
 
-    def initialize(*args)
-      super(*args)
-    end
-
     def me(global_options, options, args)
       attributes = detect_attributes(options[:attributes])
 

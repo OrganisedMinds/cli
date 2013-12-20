@@ -39,6 +39,13 @@ module OmCli::Processor
       def detect_io(mode)
         OmCli::IO.new(mode)
       end
+
+      def gimme_pagination(opts)
+        {
+          per_page: opts[:all] ? OMCli::Processor::MAX_LIMIT : (opts[:limit] || 10),
+          page:     opts[:page] || 1
+        }
+      end
     end
   end
 end

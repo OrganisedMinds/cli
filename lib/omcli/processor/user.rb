@@ -16,6 +16,20 @@ module OmCli::Processor
       io.display(res.pick(*attributes))
     end
 
+    def list(global_options, options, args)
+      io         = detect_io(global_options[:output])
+      attributes = detect_attributes(options[:attributes])
+      pagination = gimme_pagination(options)
+
+      res = handle_error("Cannot get your connections") do
+        @client.users(pagination)
+      end
+
+      io.display(res.map do |u|
+        u.pick(*attributes)
+      end)
+    end
+
     def detect_attributes(attrs)
       attrs = attrs.split(',')
       attrs.any? ? attrs : DEFAULT_ATTRIBUTES

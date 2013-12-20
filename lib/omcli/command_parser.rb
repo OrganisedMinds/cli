@@ -60,6 +60,22 @@ module OmCli
             @processor.proceed(c.name, s.name, global_options, options, args)
           end
         end
+
+        c.desc 'get your connections'
+        c.command :list do |s|
+          s.desc "Page to show"
+          s.flag :page, default_value: 1, type: Integer
+
+          s.desc "Limit of users per page"
+          s.flag :limit, default_value: 20, type: Integer
+
+          s.desc "Attributes to show"
+          s.flag [:attributes], default_value: OmCli::Processor::User::DEFAULT_ATTRIBUTES.join(',')
+
+          s.action do |global_options,options,args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
+          end
+        end
       end
     end
 

@@ -29,17 +29,14 @@ module OmCli::Processor
       io         = detect_io(global_options[:output])
       workspace  = detect_workspace(options[:workspace])
       attributes = detect_attributes(options[:attributes])
-      limit      = detect_limit(options)
+      pagination = gimme_pagination(options)
 
-      pagination = {
-        per_page: limit,
-        page:     options[:page]  || 1
-      }
-
-      res = if workspace
-        @client.workspace_items(workspace, pagination)
-      else
-        @client.activities(pagination)
+      res = handle_error("Cannot display activities") do
+        if workspace
+          @client.workspace_items(workspace, pagination)
+        else
+          @client.activities(pagination)
+        end
       end
 
       handle_error("Cannot display activities") do
@@ -60,10 +57,6 @@ module OmCli::Processor
     def detect_attributes(attrs)
       attrs = attrs.split(',')
       attrs.any? ? attrs : DEFAULT_ATTRIBUTES
-    end
-
-    def detect_limit(opts)
-      opts[:all] ? OMCli::Processor::MAX_LIMIT : (opts[:limit] || 10)
     end
   end
 end

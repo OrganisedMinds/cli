@@ -12,9 +12,12 @@ module OmCli
 
       version OmCli::VERSION
 
+      subcommand_option_handling :normal
+
       desc "Output format. Possible values are #{OmCli::IO::OUTPUT_TYPES.join(', ')}"
       flag :output, default_value: "table", must_match: OmCli::IO::OUTPUT_TYPES
 
+      init_users
       init_activities
       init_workspaces
 
@@ -45,40 +48,92 @@ module OmCli
       exit run(ARGV)
     end
 
+    def init_users
+      desc 'manage users'
+      command :user do |c|
+        c.desc 'get info about you'
+        c.command :me do |s|
+          s.desc "Attributes to show"
+          s.flag [:attributes], default_value: OmCli::Processor::User::DEFAULT_ATTRIBUTES.join(',')
+
+          s.action do |global_options,options,args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
+          end
+        end
+
+        c.desc 'get your connections'
+        c.command :list do |s|
+          s.desc "Page to show"
+          s.flag :page, default_value: 1, type: Integer
+
+          s.desc "Limit of users per page"
+          s.flag :limit, default_value: 20, type: Integer
+
+          s.desc "Attributes to show"
+          s.flag [:attributes], default_value: OmCli::Processor::User::DEFAULT_ATTRIBUTES.join(',')
+
+          s.action do |global_options,options,args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
+          end
+        end
+      end
+    end
+
     def init_activities
       desc 'manage activities'
       command :activity do |c|
         c.desc 'list activities'
-        c.command :list do |n|
-          n.desc "Page to show"
-          n.flag :page, default_value: 1, type: Integer
+        c.command :list do |s|
+          s.desc "Page to show"
+          s.flag :page, default_value: 1, type: Integer
 
-          n.desc "Limit of activities per page"
-          n.flag :limit, default_value: 20, type: Integer
+          s.desc "Limit of activities per page"
+          s.flag :limit, default_value: 20, type: Integer
 
-          n.desc "Id of a stack to create activity in."
-          n.flag [:s, :stack], type: Integer
+          # TODO: implement this
+          # add user
+          # allow list without workspace or stack
+          #
+          # s.desc "Id of a stack"
+          # s.flag [:s, :stack], type: Integer
 
-          n.desc "Id of a worksapce to create activity in."
-          n.flag [:w, :workspace], type: Integer
+          s.desc "Id of a workspace"
+          s.flag [:w, :workspace], type: Integer
 
-          n.desc "Attributes to show"
-          n.flag [:attributes], default_value: "id,name,description"
+          s.desc "Attributes to show"
+          s.flag [:attributes], default_value: OmCli::Processor::Activity::DEFAULT_ATTRIBUTES.join(',')
 
-          n.desc "Don't paginate activities. It will ignore --page and --limit flags."
-          n.switch [:A, :all]
+          s.desc "Don't paginate activities. It will ignore --page and --limit flags."
+          s.switch [:A, :all]
 
-          n.action do |global_options,options,args|
-            @processor.proceed(c.name, n.name, global_options, options, args)
+          s.action do |global_options,options,args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
           end
         end
 
         c.desc 'create new activity'
         c.arg_name '<name_of_activity>'
-        c.command :new do |n|
-          n.action do |global_options, options, args|
-            puts options.inspect
-            @processor.proceed(c.name, n.name, global_options, options, args)
+        c.command :new do |s|
+          s.desc "Id of a workspace to create an activity in"
+          s.flag [:w, :workspace], type: Integer
+
+          s.desc "Attributes to show for newly created activity"
+          s.flag [:attributes], default_value: OmCli::Processor::Activity::DEFAULT_ATTRIBUTES.join(',')
+
+          s.action do |global_options, options, args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
+          end
+        end
+
+        %w[play pause finish delete reject approve accept decline take_back take_over].each do |action|
+          c.desc "#{action} activity"
+          c.command action.to_sym do |s|
+            s.desc "Attributes to show for newly created activity"
+            s.flag [:attributes], default_value: OmCli::Processor::Activity::DEFAULT_ATTRIBUTES.join(',')
+
+            s.action do |global_options, options, args|
+              @processor.proceed(c.name, s.name, global_options, options, args)
+            end
           end
         end
       end
@@ -88,17 +143,19 @@ module OmCli
       desc 'manage workspaces'
       command :workspace do |c|
         c.desc 'list workspaces'
-        c.command :list do |n|
-          n.action do |global_options, options, args|
-            @processor.proceed(c.name, n.name, global_options, options, args)
+        c.command :list do |s|
+          s.action do |global_options, options, args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
           end
+          s.desc "Attributes to show"
+          s.flag [:attributes], default_value: OmCli::Processor::Activity::DEFAULT_ATTRIBUTES.join(',')
         end
 
         c.desc 'delete workspace'
         c.arg_name 'id_of_workspace'
-        c.command :destroy do |n|
-          n.action do |global_options, options, args|
-            @processor.proceed(c.name, n.name, global_options, options, args)
+        c.command :destroy do |s|
+          s.action do |global_options, options, args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
           end
         end
       end

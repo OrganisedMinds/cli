@@ -1,6 +1,8 @@
 module OmCli
   class IO
     OUTPUT_TYPES = ["table", "list", "json"]
+    # TODO: it should be optionable
+    SPLITTER = ', '
 
     def initialize(mode)
       @mode = OUTPUT_TYPES.include?(mode) ? mode : "table"
@@ -11,11 +13,26 @@ module OmCli
     end
 
     def display_table(data)
-      (data && data.any?) ? Formatador.display_table(data) :
-        warning("No data available")
+      case data
+      when Array
+        data.any? ? Formatador.display_table(data) :
+          warning("No data available")
+      when Hash
+        data.any? ? Formatador.display_table([data]) :
+          warning("No data available")
+      end
     end
 
     def display_list(data)
+      case data
+      when Array
+        # TODO: line.values will work only for array of hashes
+        data.each { |line| self.puts(line.values.join(SPLITTER)) }
+      when Hash
+        self.puts(data.values.join(SPLITTER))
+      when String
+        self.puts(data)
+      end
     end
 
     def display_json(data)

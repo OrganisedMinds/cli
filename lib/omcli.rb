@@ -12,6 +12,5 @@ module OmCli
   autoload :CommandParser, 'omcli/command_parser'
   autoload :Processor,     'omcli/processor'
   autoload :Client,        'omcli/client'
-  autoload :User,          'omcli/user'
   autoload :IO,            'omcli/io'
 end

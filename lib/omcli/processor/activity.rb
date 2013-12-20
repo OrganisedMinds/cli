@@ -19,10 +19,12 @@ module OmCli::Processor
         @client.create_activity(name: args.first)
       end
 
-      handle_error("Cannot put activity on stack") do
-        @client.workspace_inbox_add(
-          @user.personal_workspace.id, item_type: "Activity", item_id: res.id
-        )
+      if workspace
+        handle_error("Cannot put activity on stack") do
+          @client.workspace_inbox_add(
+            workspace, item_type: "Activity", item_id: res.id
+          )
+        end
       end
 
       io.display(res.pick(*attributes))
@@ -34,21 +36,30 @@ module OmCli::Processor
       attributes = detect_attributes(options[:attributes])
       limit      = detect_limit(options)
 
-      res = @client.workspace_items(workspace, page: options[:page] || 1, per_page: limit)
+      pagination = {
+        per_page: limit,
+        page:     options[:page]  || 1
+      }
 
-      handle_error "Cannot display activities" do
+      res = if workspace
+        @client.workspace_items(workspace, pagination)
+      else
+        @client.activities(pagination)
+      end
+
+      handle_error("Cannot display activities") do
         res = res.select do |i|
           i.keys.first == "activity"
-        end
+        end if workspace
       end
 
       io.display(res.map do |i|
-        i.activity.pick(*attributes)
+        workspace.nil? ? i.pick(*attributes) : i.activity.pick(*attributes)
       end)
     end
 
     def detect_workspace(id)
-      id.nil? ? @user.personal_workspace.id : id
+      id.is_a?(Integer) ? id : nil
     end
 
     def detect_attributes(attrs)

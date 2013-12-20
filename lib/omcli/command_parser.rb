@@ -17,6 +17,7 @@ module OmCli
       desc "Output format. Possible values are #{OmCli::IO::OUTPUT_TYPES.join(', ')}"
       flag :output, default_value: "table", must_match: OmCli::IO::OUTPUT_TYPES
 
+      init_users
       init_activities
       init_workspaces
 
@@ -47,6 +48,21 @@ module OmCli
       exit run(ARGV)
     end
 
+    def init_users
+      desc 'manage users'
+      command :user do |c|
+        c.desc 'get info about you'
+        c.command :me do |s|
+          s.desc "Attributes to show"
+          s.flag [:attributes], default_value: OmCli::Processor::User::DEFAULT_ATTRIBUTES.join(',')
+
+          s.action do |global_options,options,args|
+            @processor.proceed(c.name, s.name, global_options, options, args)
+          end
+        end
+      end
+    end
+
     def init_activities
       desc 'manage activities'
       command :activity do |c|
@@ -69,7 +85,7 @@ module OmCli
           s.flag [:w, :workspace], type: Integer
 
           s.desc "Attributes to show"
-          s.flag [:attributes], default_value: "id,name,description"
+          s.flag [:attributes], default_value: OmCli::Processor::Activity::DEFAULT_ATTRIBUTES.join(',')
 
           s.desc "Don't paginate activities. It will ignore --page and --limit flags."
           s.switch [:A, :all]
